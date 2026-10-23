@@ -1,776 +1,872 @@
 
+import { useState } from "react";
 import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import {
   ArrowRight,
   ArrowUpRight,
   Award,
+  BadgeCheck,
   Brain,
-  BriefcaseMedical,
-  CheckCircle2,
+  Check,
+  ChevronDown,
   GraduationCap,
   HeartPulse,
+  Hospital,
+  MapPin,
   Microscope,
   ShieldCheck,
   Stethoscope,
-  Users,
-  Waves,
   Target,
-  BookOpen,
+  Users,
   Activity,
-  Building2,
+  BookOpen,
+  Sparkles
 } from "lucide-react";
+import Hero from "./Hero";
 
-const translations = {
+const content = {
   en: {
     eyebrow: "ABOUT THE DOCTOR",
-    title: "A commitment to",
-    highlight: "neurological excellence.",
-    subtitle:
-      "Meet Dr. Khalid Khan Zadran, Consultant Neurosurgeon and Brain & Spine Surgeon in Kabul, Afghanistan.",
-    appointment: "Request an Appointment",
-    explore: "Explore Specialties",
-    profileLabel: "Professional Profile",
-    profileTitle: "Medicine with expertise and compassion",
-    paragraph1:
-      "Dr. Khalid Khan Zadran is a Consultant Neurosurgeon specializing in brain and spine care, based at Rifah Medical Complex in Kabul, Afghanistan.",
-    paragraph2:
-      "His stated medical qualifications include MBBS, MD, RMP, MCPS, and FCPS in Neurosurgery. His professional interests include neurological disorders, complex neurotrauma, spinal interventions, and the application of contemporary surgical technologies.",
-    paragraph3:
-      "His approach to patient care emphasizes careful clinical evaluation, clear communication, and consideration of the individual needs of each patient.",
-    qualification: "Qualifications",
-    qualificationText: "Medical and specialist qualifications",
-    memberships: "Professional affiliations",
-    membershipsText: "Organizations listed in his supplied professional profile",
-    clinicalPractice: "Clinical practice",
-    clinicalPracticeText: "Rifah Medical Complex",
-    location: "Location",
-    locationText: "Kabul, Afghanistan",
-    qualificationsEyebrow: "Education & Credentials",
-    qualificationsTitle: "Professional qualifications",
-    qualificationsText:
-      "The medical qualifications provided in the doctor's professional profile.",
-    degree1: "MBBS",
-    degree1Text: "Bachelor of Medicine and Bachelor of Surgery",
-    degree2: "MD",
-    degree2Text: "Medical degree",
-    degree3: "RMP",
-    degree3Text: "Professional designation as supplied",
-    degree4: "MCPS",
-    degree4Text: "Membership qualification",
-    degree5: "FCPS",
-    degree5Text: "Fellowship qualification in Neurosurgery",
-    membershipsEyebrow: "Professional Community",
-    membershipsTitle: "Professional affiliations",
-    membershipsText:
-      "The following organizations are identified in the supplied profile. Confirm current membership status directly before relying on these details.",
-    cpsp: "College of Physicians and Surgeons Pakistan",
-    aans: "American Association of Neurological Surgeons",
-    wfns: "World Federation of Neurosurgical Societies",
-    psn: "Pakistan Society of Neurosurgeons",
-    expertiseEyebrow: "Areas of Interest",
-    expertiseTitle: "Focused on brain and spine health",
-    expertiseText:
-      "Professional interests across neurological assessment, neurosurgical care, and contemporary clinical practice.",
-    expertise1: "Brain disorders",
-    expertise1Text:
-      "Clinical interest in neurological conditions affecting the brain and nervous system.",
-    expertise2: "Neurotrauma",
-    expertise2Text:
-      "Assessment and management considerations for injuries involving the brain and nervous system.",
-    expertise3: "Spinal care",
-    expertise3Text:
-      "Evaluation of spinal conditions and consideration of appropriate clinical options.",
-    expertise4: "Surgical technology",
-    expertise4Text:
-      "Interest in modern technologies and evolving approaches in neurosurgery.",
-    approachEyebrow: "Patient-Centred Care",
-    approachTitle: "A thoughtful approach to every patient",
+    title: "Advanced expertise. A more personal approach.",
+    intro:
+      "Dr. Khalid Khan Zadran is a consultant neurosurgeon based in Kabul, Afghanistan, focused on brain and spine care through specialist assessment, surgical expertise, and thoughtful patient communication.",
+    location: "Kabul, Afghanistan",
+    specialty: "Consultant Neurosurgeon",
+    profileLabel: "THE PROFESSIONAL PROFILE",
+    profileTitle: "Committed to advancing brain and spine care.",
+    profileText:
+      "Dr. Zadran's professional practice brings together specialist neurosurgical training, clinical assessment, and a patient-centred approach. Helping patients understand their condition and the options available is an important part of the care journey.",
+    profileText2:
+      "Based at Rifah Medical Complex in Kabul, he is dedicated to contributing to the development of neurosurgical services and medical knowledge in Afghanistan.",
+    credentials: "Education & credentials",
+    credentialsSub: "Professional background",
+    qualifications: [
+      "FCPS qualification in Neurosurgery",
+      "MBBS and additional medical qualifications",
+      "Advanced neurosurgical training in Pakistan",
+      "Professional involvement in neurosurgery",
+    ],
+    expertiseEyebrow: "CLINICAL EXPERTISE",
+    expertiseTitle: "Areas of expertise",
+    expertiseIntro:
+      "Specialist evaluation and care for conditions involving the brain, spine, and nervous system.",
+    specialties: [
+      {
+        title: "Brain & cranial surgery",
+        text: "Assessment and surgical management of selected conditions affecting the brain and skull.",
+        icon: Brain,
+      },
+      {
+        title: "Spine & spinal disorders",
+        text: "Evaluation of spinal conditions with attention to mobility, function, and quality of life.",
+        icon: Activity,
+      },
+      {
+        title: "Neurotrauma",
+        text: "Clinical assessment of injuries involving the brain and nervous system.",
+        icon: ShieldCheck,
+      },
+      {
+        title: "Neurological conditions",
+        text: "Evaluation of neurological symptoms and guidance on appropriate treatment options.",
+        icon: HeartPulse,
+      },
+    ],
+    whyEyebrow: "THE CARE PHILOSOPHY",
+    whyTitle: "Medicine with the patient at its centre.",
+    whyIntro:
+      "Effective care is built on attentive listening, clear communication, and considered clinical decisions.",
+    reasons: [
+      {
+        title: "Patient-first care",
+        text: "Understanding individual concerns, symptoms, and treatment priorities.",
+        icon: Users,
+      },
+      {
+        title: "Clinical precision",
+        text: "Considering clinical findings and available evidence when discussing care.",
+        icon: Microscope,
+      },
+      {
+        title: "Clear guidance",
+        text: "Making medical information and possible next steps easier to understand.",
+        icon: BadgeCheck,
+      },
+      {
+        title: "Continuity of care",
+        text: "Supporting patients through assessment, treatment planning, and follow-up.",
+        icon: HeartPulse,
+      },
+    ],
+    approachEyebrow: "THE APPROACH",
+    approachTitle: "A considered path from assessment to care.",
     approachText:
-      "Neurological conditions can be complex. Understanding a patient's concerns and explaining clinical options are important parts of the care process.",
-    approach1: "Careful evaluation",
-    approach1Text:
-      "Understand symptoms, relevant history, and clinical findings before considering treatment.",
-    approach2: "Clear communication",
-    approach2Text:
-      "Help patients understand their condition and the next steps in their care.",
-    approach3: "Individualized decisions",
-    approach3Text:
-      "Treatment decisions depend on the patient's condition and professional medical assessment.",
-    approach4: "Continued learning",
-    approach4Text:
-      "Maintain an interest in developing knowledge and contemporary neurosurgical practice.",
-    clinicEyebrow: "Clinical Location",
-    clinicTitle: "Where to find the practice",
-    clinicName: "Rifah Medical Complex",
-    clinicLocation: "Kabul, Afghanistan",
-    clinicText:
-      "Contact the clinic to confirm consultation availability, directions, and appointment arrangements.",
-    phoneLabel: "Clinic telephone",
-    contactButton: "Contact the Clinic",
-    contactPage: "View Contact Details",
-    disclaimer:
-      "The information on this page is based on the supplied professional profile and has not been independently verified. Qualifications, memberships, and clinical services should be confirmed with the doctor or clinic.",
-    medicalDisclaimer:
-      "This website provides general information and does not replace professional medical advice, diagnosis, or emergency care.",
+      "Every patient deserves to be heard, understood, and treated with respect. The aim is to explain complex medical information clearly and help patients make informed decisions in consultation with their medical team.",
+    steps: [
+      {
+        number: "01",
+        title: "Listen & understand",
+        text: "Discuss symptoms, concerns, medical history, and individual needs.",
+      },
+      {
+        number: "02",
+        title: "Assess & explain",
+        text: "Review clinical findings and discuss relevant diagnostic and treatment options.",
+      },
+      {
+        number: "03",
+        title: "Plan & support",
+        text: "Outline an appropriate care plan and explain the next steps.",
+      },
+    ],
+    milestoneEyebrow: "PROFESSIONAL MILESTONE",
+    milestoneTitle: "A contribution to the future of neurosurgery in Afghanistan.",
+    milestoneText:
+      "The professional background supplied for this website identifies Dr. Zadran as Afghanistan's first FCPS-qualified neurosurgeon. His story highlights the importance of specialist training and the continued development of neurosurgical care.",
+    verification:
+      "Please confirm professional qualifications and historical claims with the doctor before publication.",
+    researchEyebrow: "RESEARCH & COLLABORATION",
+    researchTitle: "Looking beyond clinical practice.",
+    researchText:
+      "Alongside clinical work, Dr. Zadran has an interest in brain disorder research and the advancement of neurosurgical knowledge. Medical collaboration and professional education can help strengthen specialist care for future generations.",
+    researchPoints: [
+      "Interest in brain disorder research",
+      "Engagement with the Afghan neurosurgical community",
+      "Commitment to medical education and professional development",
+    ],
+    contactEyebrow: "START A CONVERSATION",
+    contactTitle: "Your next step starts with a conversation.",
+    contactText:
+      "Contact the clinic for information about consultations, appointments, and the process of arranging a medical assessment.",
+    contactButton: "Request an appointment",
+    servicesButton: "Explore specialties",
+    locationLabel: "PRACTICE LOCATION",
+    locationName: "Rifah Medical Complex",
+    footerNote: "Brain & Spine Care · Kabul, Afghanistan",
+    stats: [
+      { value: "FCPS", label: "Neurosurgery" },
+      { value: "Brain", label: "Specialist care" },
+      { value: "Spine", label: "Specialist care" },
+    ],
+    principle: "CARE PRINCIPLE",
   },
+
   fa: {
     eyebrow: "درباره داکتر",
-    title: "تعهد به",
-    highlight: "تخصص در سلامت اعصاب.",
-    subtitle:
-      "با داکتر خالد خان زدران، متخصص جراحی اعصاب و جراحی مغز و ستون فقرات در کابل، افغانستان آشنا شوید.",
-    appointment: "درخواست نوبت",
-    explore: "مشاهده تخصص‌ها",
-    profileLabel: "پروفایل حرفه‌ای",
-    profileTitle: "پزشکی با تخصص و دلسوزی",
-    paragraph1:
-      "داکتر خالد خان زدران متخصص جراحی اعصاب و مراقبت از مغز و ستون فقرات است که در مجتمع طبی رفاه در کابل، افغانستان فعالیت می‌کند.",
-    paragraph2:
-      "مدارک پزشکی ذکرشده شامل MBBS، MD، RMP، MCPS و FCPS در جراحی اعصاب است. علاقه‌مندی‌های حرفه‌ای او شامل اختلالات عصبی، آسیب‌های پیچیده عصبی، مداخلات ستون فقرات و کاربرد فناوری‌های معاصر جراحی می‌شود.",
-    paragraph3:
-      "رویکرد او به مراقبت از بیماران بر ارزیابی دقیق بالینی، ارتباط روشن و توجه به نیازهای فردی هر بیمار تأکید دارد.",
-    qualification: "مدارک تخصصی",
-    qualificationText: "مدارک پزشکی و تخصصی",
-    memberships: "عضویت‌های حرفه‌ای",
-    membershipsText: "انجمن‌های ذکرشده در پروفایل ارائه‌شده",
-    clinicalPractice: "محل فعالیت",
-    clinicalPracticeText: "مجتمع طبی رفاه",
-    location: "موقعیت",
-    locationText: "کابل، افغانستان",
-    qualificationsEyebrow: "تحصیلات و مدارک",
-    qualificationsTitle: "مدارک حرفه‌ای",
-    qualificationsText: "مدارک پزشکی ذکرشده در پروفایل حرفه‌ای داکتر.",
-    degree1: "MBBS",
-    degree1Text: "مدرک طب و جراحی",
-    degree2: "MD",
-    degree2Text: "مدرک داکتری پزشکی",
-    degree3: "RMP",
-    degree3Text: "عنوان حرفه‌ای مطابق معلومات ارائه‌شده",
-    degree4: "MCPS",
-    degree4Text: "مدرک عضویت تخصصی",
-    degree5: "FCPS",
-    degree5Text: "مدرک تخصصی جراحی اعصاب",
-    membershipsEyebrow: "جامعه حرفه‌ای",
-    membershipsTitle: "انجمن‌های حرفه‌ای",
-    membershipsText:
-      "انجمن‌های زیر در پروفایل ارائه‌شده ذکر شده‌اند. پیش از استناد به این معلومات، وضعیت فعلی عضویت را مستقیماً تأیید کنید.",
-    cpsp: "کالج پزشکان و جراحان پاکستان",
-    aans: "انجمن جراحان اعصاب امریکا",
-    wfns: "فدراسیون جهانی انجمن‌های جراحی اعصاب",
-    psn: "انجمن جراحان اعصاب پاکستان",
-    expertiseEyebrow: "حوزه‌های علاقه‌مندی",
-    expertiseTitle: "تمرکز بر سلامت مغز و ستون فقرات",
-    expertiseText:
-      "علاقه‌مندی‌های حرفه‌ای در زمینه ارزیابی عصبی، مراقبت‌های جراحی اعصاب و روش‌های معاصر بالینی.",
-    expertise1: "اختلالات مغزی",
-    expertise1Text: "علاقه‌مندی بالینی به بیماری‌های مغز و دستگاه عصبی.",
-    expertise2: "آسیب‌های عصبی",
-    expertise2Text: "ارزیابی و بررسی مراقبت‌های لازم برای آسیب‌های مغز و دستگاه عصبی.",
-    expertise3: "مراقبت از ستون فقرات",
-    expertise3Text: "ارزیابی بیماری‌های ستون فقرات و بررسی گزینه‌های مناسب بالینی.",
-    expertise4: "فناوری جراحی",
-    expertise4Text: "علاقه‌مندی به فناوری‌های نوین و روش‌های در حال پیشرفت جراحی اعصاب.",
-    approachEyebrow: "مراقبت بیمارمحور",
-    approachTitle: "رویکرد سنجیده برای هر بیمار",
+    title: "تخصص پیشرفته، مراقبت انسانی‌تر.",
+    intro:
+      "داکتر خالد خان ځدراڼ متخصص جراحی اعصاب در کابل، افغانستان است که بر مراقبت مغز و ستون فقرات، ارزیابی تخصصی و ارتباط روشن با بیماران تمرکز دارد.",
+    location: "کابل، افغانستان",
+    specialty: "متخصص جراحی اعصاب",
+    profileLabel: "معرفی مسلکی",
+    profileTitle: "تعهد به پیشرفت مراقبت از مغز و ستون فقرات.",
+    profileText:
+      "فعالیت مسلکی داکتر ځدراڼ آموزش تخصصی جراحی اعصاب، ارزیابی بالینی و توجه به نیازهای بیمار را با هم ترکیب می‌کند. کمک به بیمار برای شناخت وضعیت خود و گزینه‌های موجود، بخش مهم روند مراقبت است.",
+    profileText2:
+      "او در مجتمع طبی رفاه در کابل فعالیت می‌کند و به توسعه خدمات جراحی اعصاب و دانش طبی در افغانستان متعهد است.",
+    credentials: "تحصیلات و مدارک مسلکی",
+    credentialsSub: "پیشینه مسلکی",
+    qualifications: [
+      "مدرک تخصصی FCPS در جراحی اعصاب",
+      "مدرک MBBS و سایر مدارک طبی",
+      "آموزش پیشرفته جراحی اعصاب در پاکستان",
+      "فعالیت مسلکی در بخش جراحی اعصاب",
+    ],
+    expertiseEyebrow: "تخصص‌های کلینیکی",
+    expertiseTitle: "حوزه‌های تخصص",
+    expertiseIntro:
+      "ارزیابی و مراقبت تخصصی از بیماری‌های مغز، ستون فقرات و سیستم عصبی.",
+    specialties: [
+      {
+        title: "جراحی مغز و جمجمه",
+        text: "ارزیابی و مدیریت جراحی برخی بیماری‌های مغز و جمجمه.",
+        icon: Brain,
+      },
+      {
+        title: "ستون فقرات",
+        text: "ارزیابی بیماری‌های ستون فقرات با توجه به حرکت و کیفیت زندگی.",
+        icon: Activity,
+      },
+      {
+        title: "آسیب‌های عصبی",
+        text: "ارزیابی کلینیکی آسیب‌های مغز و سیستم عصبی.",
+        icon: ShieldCheck,
+      },
+      {
+        title: "بیماری‌های عصبی",
+        text: "ارزیابی علایم عصبی و راهنمایی درباره گزینه‌های مناسب درمان.",
+        icon: HeartPulse,
+      },
+    ],
+    whyEyebrow: "فلسفه مراقبت",
+    whyTitle: "مراقبت با محوریت بیمار.",
+    whyIntro:
+      "مراقبت مؤثر بر شنیدن دقیق، ارتباط روشن و تصمیم‌گیری سنجیده طبی استوار است.",
+    reasons: [
+      {
+        title: "اولویت به بیمار",
+        text: "شناخت نیازها، علایم و نگرانی‌های هر بیمار.",
+        icon: Users,
+      },
+      {
+        title: "دقت کلینیکی",
+        text: "در نظر گرفتن یافته‌های طبی و شواهد موجود در روند درمان.",
+        icon: Microscope,
+      },
+      {
+        title: "راهنمایی روشن",
+        text: "توضیح قابل فهم معلومات طبی و مراحل بعدی.",
+        icon: BadgeCheck,
+      },
+      {
+        title: "تداوم مراقبت",
+        text: "همراهی بیمار در ارزیابی، برنامه‌ریزی درمان و پیگیری.",
+        icon: HeartPulse,
+      },
+    ],
+    approachEyebrow: "روش مراقبت",
+    approachTitle: "از ارزیابی تا مراقبت، با برنامه‌ای سنجیده.",
     approachText:
-      "بیماری‌های عصبی می‌توانند پیچیده باشند. درک نگرانی‌های بیمار و توضیح گزینه‌های بالینی بخش مهمی از روند مراقبت است.",
-    approach1: "ارزیابی دقیق",
-    approach1Text: "بررسی علایم، سابقه مرتبط و یافته‌های بالینی پیش از بررسی درمان.",
-    approach2: "ارتباط روشن",
-    approach2Text: "کمک به بیماران برای درک وضعیت و مراحل بعدی مراقبت.",
-    approach3: "تصمیم‌گیری متناسب",
-    approach3Text: "تصمیم‌های درمانی به وضعیت بیمار و ارزیابی تخصصی پزشکی بستگی دارد.",
-    approach4: "یادگیری مداوم",
-    approach4Text: "توجه به گسترش دانش و روش‌های معاصر جراحی اعصاب.",
-    clinicEyebrow: "موقعیت مرکز درمانی",
-    clinicTitle: "محل فعالیت داکتر",
-    clinicName: "مجتمع طبی رفاه",
-    clinicLocation: "کابل، افغانستان",
-    clinicText:
-      "برای تأیید زمان مشاوره، نشانی و شرایط گرفتن نوبت با مرکز درمانی تماس بگیرید.",
-    phoneLabel: "شماره تماس کلینیک",
-    contactButton: "تماس با کلینیک",
-    contactPage: "مشاهده معلومات تماس",
-    disclaimer:
-      "معلومات این صفحه بر اساس پروفایل ارائه‌شده است و مستقلاً تأیید نشده است. مدارک، عضویت‌ها و خدمات بالینی را با داکتر یا مرکز درمانی تأیید کنید.",
-    medicalDisclaimer:
-      "این وب‌سایت معلومات عمومی ارائه می‌کند و جایگزین مشوره تخصصی پزشکی، تشخیص یا مراقبت عاجل نیست.",
+      "هر بیمار شایسته شنیده‌شدن، درک‌شدن و برخورد محترمانه است. هدف این است که معلومات پیچیده طبی به شکل روشن توضیح داده شود تا بیمار با مشوره تیم طبی تصمیم آگاهانه بگیرد.",
+    steps: [
+      {
+        number: "۰۱",
+        title: "شنیدن و شناخت",
+        text: "بررسی علایم، نگرانی‌ها، سابقه طبی و نیازهای فردی.",
+      },
+      {
+        number: "۰۲",
+        title: "ارزیابی و توضیح",
+        text: "بررسی یافته‌های کلینیکی و توضیح گزینه‌های تشخیص و درمان.",
+      },
+      {
+        number: "۰۳",
+        title: "برنامه‌ریزی و همراهی",
+        text: "توضیح برنامه مناسب مراقبت و مراحل بعدی.",
+      },
+    ],
+    milestoneEyebrow: "دستاورد مسلکی",
+    milestoneTitle: "سهم‌گیری در آینده جراحی اعصاب افغانستان.",
+    milestoneText:
+      "در پیشینه مسلکی ارائه‌شده برای این وب‌سایت، از داکتر ځدراڼ به‌عنوان نخستین متخصص جراحی اعصاب افغانستان با مدرک FCPS یاد شده است. مسیر مسلکی او اهمیت آموزش تخصصی و توسعه مراقبت‌های طبی را برجسته می‌سازد.",
+    verification:
+      "پیش از نشر، مدارک مسلکی و ادعاهای تاریخی باید با خود داکتر تأیید شوند.",
+    researchEyebrow: "تحقیق و همکاری",
+    researchTitle: "فراتر از فعالیت کلینیکی.",
+    researchText:
+      "داکتر ځدراڼ در کنار فعالیت کلینیکی به تحقیق در زمینه اختلالات مغزی و پیشرفت دانش جراحی اعصاب علاقه‌مند است. همکاری مسلکی و آموزش طبی می‌تواند به تقویت خدمات تخصصی در آینده کمک کند.",
+    researchPoints: [
+      "علاقه‌مندی به تحقیق در زمینه اختلالات مغزی",
+      "تعامل با جامعه جراحی اعصاب افغانستان",
+      "تعهد به آموزش طبی و رشد مسلکی",
+    ],
+    contactEyebrow: "آغاز گفتگو",
+    contactTitle: "گام بعدی با یک گفتگو آغاز می‌شود.",
+    contactText:
+      "برای معلومات درباره مشوره طبی، نوبت و مراحل ارزیابی با کلینیک تماس بگیرید.",
+    contactButton: "درخواست نوبت",
+    servicesButton: "مشاهده تخصص‌ها",
+    locationLabel: "محل فعالیت",
+    locationName: "مجتمع طبی رفاه",
+    footerNote: "مراقبت مغز و ستون فقرات · کابل، افغانستان",
+    stats: [
+      { value: "FCPS", label: "جراحی اعصاب" },
+      { value: "مغز", label: "مراقبت تخصصی" },
+      { value: "ستون فقرات", label: "مراقبت تخصصی" },
+    ],
+    principle: "اصل مراقبت",
   },
+
   ps: {
     eyebrow: "د ډاکټر په اړه",
-    title: "د ژمنتیا",
-    highlight: "او تخصص له لارې عصبي پاملرنه.",
-    subtitle:
-      "له ډاکټر خالد خان ځدراڼ سره اشنا شئ، چې په کابل، افغانستان کې د اعصابو او مغز او ملا تیر جراح متخصص دی.",
-    appointment: "د ملاقات غوښتنه",
-    explore: "تخصصونه وګورئ",
+    title: "لوړ تخصص، له ناروغ سره انساني چلند.",
+    intro:
+      "ډاکټر خالد خان ځدراڼ په کابل، افغانستان کې د اعصابو متخصص جراح دی چې د مغز او ملا تیر پر پاملرنې، تخصصي ارزونې او له ناروغانو سره پر روښانه اړیکو تمرکز کوي.",
+    location: "کابل، افغانستان",
+    specialty: "د اعصابو متخصص جراح",
     profileLabel: "مسلکي پېژندنه",
-    profileTitle: "د تخصص او خواخوږۍ پر بنسټ طب",
-    paragraph1:
-      "ډاکټر خالد خان ځدراڼ د اعصابو جراح او د مغز او ملا تیر متخصص دی چې د کابل په رفاه طبي کمپلکس کې فعالیت کوي.",
-    paragraph2:
-      "په ورکړل شوو معلوماتو کې MBBS، MD، RMP، MCPS او FCPS د عصبي جراحۍ اسناد یاد شوي دي. مسلکي لېوالتیاوې یې عصبي اختلالات، پیچلي عصبي ټپونه، د ملا تیر مداخلې او د معاصرې جراحي ټکنالوژۍ کارول دي.",
-    paragraph3:
-      "د ناروغانو د پاملرنې تګلاره یې پر دقیقې کلینیکي ارزونې، روښانه اړیکو او د هر ناروغ اړتیاوو ته پر پاملرنې ټینګار کوي.",
-    qualification: "تخصصي اسناد",
-    qualificationText: "طبي او تخصصي اسناد",
-    memberships: "مسلکي غړیتوبونه",
-    membershipsText: "په ورکړل شوي پروفایل کې یادې شوې ټولنې",
-    clinicalPractice: "کلینیکي فعالیت",
-    clinicalPracticeText: "رفاه طبي کمپلکس",
-    location: "ځای",
-    locationText: "کابل، افغانستان",
-    qualificationsEyebrow: "زده کړې او اسناد",
-    qualificationsTitle: "مسلکي وړتیاوې",
-    qualificationsText: "هغه طبي اسناد چې د ډاکټر په ورکړل شوي پروفایل کې یاد شوي دي.",
-    degree1: "MBBS",
-    degree1Text: "د طب او جراحۍ سند",
-    degree2: "MD",
-    degree2Text: "د طبي زده کړو سند",
-    degree3: "RMP",
-    degree3Text: "د ورکړل شوو معلوماتو له مخې مسلکي عنوان",
-    degree4: "MCPS",
-    degree4Text: "د تخصصي غړیتوب سند",
-    degree5: "FCPS",
-    degree5Text: "د عصبي جراحۍ تخصصي فیلوشپ",
-    membershipsEyebrow: "مسلکي ټولنه",
-    membershipsTitle: "مسلکي غړیتوبونه",
-    membershipsText:
-      "لاندې ټولنې په ورکړل شوي پروفایل کې یادې شوې دي. د دې معلوماتو له کارولو مخکې د اوسني غړیتوب حالت په مستقیم ډول تایید کړئ.",
-    cpsp: "د پاکستان د ډاکټرانو او جراحانو کالج",
-    aans: "د عصبي جراحانو امریکایي ټولنه",
-    wfns: "د عصبي جراحۍ د ټولنو نړیوال فدراسیون",
-    psn: "د پاکستان د عصبي جراحانو ټولنه",
-    expertiseEyebrow: "مسلکي لېوالتیاوې",
-    expertiseTitle: "د مغز او ملا تیر روغتیا ته پاملرنه",
-    expertiseText:
-      "د عصبي ارزونې، جراحي پاملرنې او معاصر کلینیکي فعالیت په برخو کې مسلکي لېوالتیا.",
-    expertise1: "مغزي اختلالات",
-    expertise1Text: "د مغز او عصبي سیستم د ناروغیو په اړه کلینیکي لېوالتیا.",
-    expertise2: "عصبي ټپونه",
-    expertise2Text: "د مغز او عصبي سیستم د ټپونو ارزونه او د پاملرنې اړتیاوې.",
-    expertise3: "د ملا تیر پاملرنه",
-    expertise3Text: "د ملا تیر د ناروغیو ارزونه او د مناسبو کلینیکي لارو څېړنه.",
-    expertise4: "جراحي ټکنالوژي",
-    expertise4Text: "د عصبي جراحۍ له معاصرو ټکنالوژیو او پرمختلونکو لارو سره لېوالتیا.",
-    approachEyebrow: "د ناروغ پاملرنه",
-    approachTitle: "د هر ناروغ لپاره سنجول شوې تګلاره",
+    profileTitle: "د مغز او ملا تیر د پاملرنې پرمختګ ته ژمنتیا.",
+    profileText:
+      "د ډاکټر ځدراڼ مسلکي فعالیت د اعصابو جراحي تخصصي زده کړې، کلینیکي ارزونه او د ناروغ اړتیاوو ته پاملرنه سره یوځای کوي. د ناروغ سره د هغه د وضعیت او شته درملنیزو لارو په پوهېدو کې مرسته د پاملرنې مهمه برخه ده.",
+    profileText2:
+      "هغه په کابل کې د رفاه طبي کمپلکس کې فعالیت کوي او په افغانستان کې د اعصابو جراحي د خدمتونو او طبي پوهې پراختیا ته ژمن دی.",
+    credentials: "زده کړې او مسلکي اسناد",
+    credentialsSub: "مسلکي مخینه",
+    qualifications: [
+      "د اعصابو په جراحي کې د FCPS وړتیا",
+      "د MBBS سند او نورې طبي وړتیاوې",
+      "په پاکستان کې د اعصابو جراحي پرمختللې روزنه",
+      "د اعصابو جراحي په برخه کې مسلکي فعالیت",
+    ],
+    expertiseEyebrow: "کلینیکي تخصص",
+    expertiseTitle: "د تخصص برخې",
+    expertiseIntro:
+      "د مغز، ملا تیر او عصبي سیستم د ناروغیو ارزونه او تخصصي پاملرنه.",
+    specialties: [
+      {
+        title: "د مغز او کوپړۍ جراحي",
+        text: "د مغز او کوپړۍ د ځینو ناروغیو ارزونه او جراحي مدیریت.",
+        icon: Brain,
+      },
+      {
+        title: "د ملا تیر ناروغۍ",
+        text: "د حرکت او ژوند کیفیت ته په پاملرنې سره د ملا تیر ارزونه.",
+        icon: Activity,
+      },
+      {
+        title: "عصبي ټپونه",
+        text: "د مغز او عصبي سیستم د ټپونو کلینیکي ارزونه.",
+        icon: ShieldCheck,
+      },
+      {
+        title: "عصبي ناروغۍ",
+        text: "د عصبي نښو ارزونه او د مناسبو درملنیزو لارو په اړه لارښوونه.",
+        icon: HeartPulse,
+      },
+    ],
+    whyEyebrow: "د پاملرنې فلسفه",
+    whyTitle: "د ناروغ پر اړتیاوو ولاړه پاملرنه.",
+    whyIntro:
+      "اغېزمن روغتیايي خدمت د ناروغ له اورېدو، روښانه اړیکو او سنجول شویو طبي پرېکړو پیلېږي.",
+    reasons: [
+      {
+        title: "ناروغ لومړیتوب لري",
+        text: "د هر ناروغ د اړتیاوو، نښو او اندېښنو درک کول.",
+        icon: Users,
+      },
+      {
+        title: "کلینیکي دقت",
+        text: "د درملنې پر مهال د کلینیکي موندنو او شواهدو ارزونه.",
+        icon: Microscope,
+      },
+      {
+        title: "روښانه لارښوونه",
+        text: "د طبي معلوماتو او راتلونکو ګامونو روښانه تشریح.",
+        icon: BadgeCheck,
+      },
+      {
+        title: "د پاملرنې دوام",
+        text: "په ارزونه، درملنیز پلان او تعقیبي پاملرنه کې ملاتړ.",
+        icon: HeartPulse,
+      },
+    ],
+    approachEyebrow: "د پاملرنې تګلاره",
+    approachTitle: "له ارزونې تر پاملرنې، په سنجول شوې لاره.",
     approachText:
-      "عصبي ناروغۍ پېچلې کېدای شي. د ناروغ د اندېښنو درک کول او د کلینیکي لارو تشریح د پاملرنې مهمې برخې دي.",
-    approach1: "دقیق کلینیکي ارزونه",
-    approach1Text: "د درملنې تر ارزونې مخکې د نښو، تاریخچې او کلینیکي موندنو کتنه.",
-    approach2: "روښانه اړیکه",
-    approach2Text: "د ناروغ سره د هغه د حالت او راتلونکو ګامونو په پوهېدو کې مرسته.",
-    approach3: "انفرادي پرېکړې",
-    approach3Text: "د درملنې پرېکړې د ناروغ په حالت او طبي ارزونه پورې تړلې دي.",
-    approach4: "دوامداره زده کړه",
-    approach4Text: "د پوهې او معاصرې عصبي جراحۍ د پرمختګ په اړه لېوالتیا.",
-    clinicEyebrow: "کلینیکي ځای",
-    clinicTitle: "د فعالیت ځای",
-    clinicName: "رفاه طبي کمپلکس",
-    clinicLocation: "کابل، افغانستان",
-    clinicText:
-      "د ملاقات د وخت، پته او د نوبت د ترتیباتو د تایید لپاره له کلینیک سره اړیکه ونیسئ.",
-    phoneLabel: "د کلینیک شمېره",
-    contactButton: "له کلینیک سره اړیکه",
-    contactPage: "د اړیکو معلومات",
-    disclaimer:
-      "د دې پاڼې معلومات د ورکړل شوي پروفایل پر بنسټ دي او په خپلواکه توګه نه دي تایید شوي. اسناد، غړیتوبونه او کلینیکي خدمات له ډاکټر یا کلینیک سره تایید کړئ.",
-    medicalDisclaimer:
-      "دا وېبپاڼه عمومي معلومات وړاندې کوي او د مسلکي طبي مشورې، تشخیص یا بیړنۍ درملنې ځای نه نیسي.",
+      "هر ناروغ حق لري چې واورېدل شي، درک شي او درناوی یې وشي. موخه دا ده چې پېچلي طبي معلومات په روښانه ډول وړاندې شي، څو ناروغ له طبي ټیم سره په مشوره باخبره پرېکړه وکړي.",
+    steps: [
+      {
+        number: "۰۱",
+        title: "اورېدل او پوهېدل",
+        text: "د نښو، اندېښنو، طبي سابقې او فردي اړتیاوو ارزونه.",
+      },
+      {
+        number: "۰۲",
+        title: "ارزونه او وضاحت",
+        text: "د کلینیکي موندنو ارزونه او د تشخیص او درملنې د لارو تشریح.",
+      },
+      {
+        number: "۰۳",
+        title: "پلان او ملاتړ",
+        text: "د مناسبې پاملرنې پلان او راتلونکو ګامونو تشریح.",
+      },
+    ],
+    milestoneEyebrow: "مسلکي لاسته راوړنه",
+    milestoneTitle: "په افغانستان کې د اعصابو جراحي راتلونکي ته ونډه.",
+    milestoneText:
+      "د دې وېب‌پاڼې لپاره د ورکړل شوې مسلکي مخینې له مخې، ډاکټر ځدراڼ د افغانستان د لومړي FCPS وړتیا لرونکي د اعصابو جراح په توګه پېژندل شوی دی. د هغه مسلکي مسیر د تخصصي زده کړو او روغتیايي خدمتونو د پراختیا اهمیت څرګندوي.",
+    verification:
+      "د وېب‌پاڼې تر خپرېدو مخکې باید مسلکي اسناد او تاریخي ادعاوې له ډاکټر سره تایید شي.",
+    researchEyebrow: "څېړنه او همکاري",
+    researchTitle: "له کلینیکي فعالیت ورهاخوا.",
+    researchText:
+      "ډاکټر ځدراڼ د کلینیکي فعالیت تر څنګ د مغزي اختلالاتو څېړنې او د اعصابو جراحي د پوهې پرمختګ ته لېوالتیا لري. مسلکي همکاري او طبي زده کړې د راتلونکو نسلونو لپاره د تخصصي خدمتونو په پیاوړتیا کې مرسته کوي.",
+    researchPoints: [
+      "د مغزي اختلالاتو څېړنې ته لېوالتیا",
+      "د افغانستان د اعصابو جراحي له ټولنې سره اړیکه",
+      "طبي زده کړو او مسلکي پرمختګ ته ژمنتیا",
+    ],
+    contactEyebrow: "خبرې پیل کړئ",
+    contactTitle: "ستاسو بل ګام له یوې خبرې پیلېږي.",
+    contactText:
+      "د طبي مشورې، نوبت او ارزونې د پړاوونو په اړه د معلوماتو لپاره له کلینیک سره اړیکه ونیسئ.",
+    contactButton: "د نوبت غوښتنه",
+    servicesButton: "تخصصي برخې وګورئ",
+    locationLabel: "د فعالیت ځای",
+    locationName: "رفاه طبي کمپلکس",
+    footerNote: "د مغز او ملا تیر پاملرنه · کابل، افغانستان",
+    stats: [
+      { value: "FCPS", label: "د اعصابو جراحي" },
+      { value: "مغز", label: "تخصصي پاملرنه" },
+      { value: "ملا تیر", label: "تخصصي پاملرنه" },
+    ],
+    principle: "د پاملرنې اصل",
   },
 };
 
-const qualifications = [
-  { icon: GraduationCap, title: "degree1", detail: "degree1Text" },
-  { icon: BookOpen, title: "degree2", detail: "degree2Text" },
-  { icon: BriefcaseMedical, title: "degree3", detail: "degree3Text" },
-  { icon: Award, title: "degree4", detail: "degree4Text" },
-  { icon: ShieldCheck, title: "degree5", detail: "degree5Text" },
-];
-
-const affiliations = [
-  { acronym: "CPSP", title: "cpsp" },
-  { acronym: "AANS", title: "aans" },
-  { acronym: "WFNS", title: "wfns" },
-  { acronym: "PSN", title: "psn" },
-];
-
-const expertise = [
-  { icon: Brain, title: "expertise1", description: "expertise1Text" },
-  { icon: Activity, title: "expertise2", description: "expertise2Text" },
-  { icon: Waves, title: "expertise3", description: "expertise3Text" },
-  {
-    icon: Microscope,
-    title: "expertise4",
-    description: "expertise4Text",
-  },
-];
-
-const approaches = [
-  { icon: Target, title: "approach1", description: "approach1Text" },
-  {
-    icon: HeartPulse,
-    title: "approach2",
-    description: "approach2Text",
-  },
-  {
-    icon: Users,
-    title: "approach3",
-    description: "approach3Text",
-  },
-  {
-    icon: BookOpen,
-    title: "approach4",
-    description: "approach4Text",
-  },
-];
-
-function SectionHeading({ eyebrow, title, highlight, description, t }) {
+function SectionHeading({ eyebrow, title, description, light = false }) {
   return (
-    <div className="max-w-2xl">
-      <p className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-teal-700">
-        <span className="h-px w-7 bg-teal-600" />
-        {t(eyebrow)}
+    <div className="mb-8 sm:mb-10">
+      <p
+        className={`mb-3 text-[11px] font-extrabold uppercase tracking-[0.18em] ${
+          light ? "text-[#a9e6e4]" : "text-[#087f86]"
+        }`}
+      >
+        {eyebrow}
       </p>
 
-      <h2 className="text-3xl font-extrabold leading-tight tracking-[-0.045em] text-[#142B45] sm:text-4xl lg:text-[46px]">
-        {t(title)}{" "}
-        <span className="text-teal-700">{t(highlight)}</span>
+      <h2
+        className={`max-w-3xl text-[30px] font-extrabold leading-[1.17] tracking-[-0.045em] sm:text-[38px] lg:text-[44px] ${
+          light ? "text-white" : "text-[#102b43]"
+        }`}
+      >
+        {title}
       </h2>
 
       {description && (
-        <p className="mt-4 max-w-xl text-sm leading-7 text-slate-500 sm:text-base sm:leading-8">
-          {t(description)}
+        <p
+          className={`mt-4 max-w-2xl text-[15px] leading-7 sm:text-[16px] sm:leading-8 ${
+            light ? "text-white/75" : "text-[#526d86]"
+          }`}
+        >
+          {description}
         </p>
       )}
     </div>
   );
 }
 
+function Eyebrow({ children }) {
+  return (
+    <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#087f86]">
+      <span className="h-[2px] w-6 rounded-full bg-[#087f86]" />
+      {children}
+    </span>
+  );
+}
+
 export default function About() {
   const { i18n } = useTranslation();
+  const [activeStep, setActiveStep] = useState(0);
 
-  const language = (
+  const rawLanguage = (
     i18n.resolvedLanguage ||
     i18n.language ||
     "en"
-  )
-    .split("-")[0]
-    .toLowerCase();
+  ).toLowerCase();
 
-  const t = (key) =>
-    translations[language]?.[key] ?? translations.en[key] ?? key;
+  const language = rawLanguage.startsWith("ps")
+    ? "ps"
+    : rawLanguage.startsWith("fa") ||
+        rawLanguage.startsWith("dr")
+      ? "fa"
+      : "en";
 
+  const t = content[language];
   const isRTL = language === "fa" || language === "ps";
 
+  const fontClass = isRTL ? "font-persian" : "font-english";
+
   return (
-    <div
+    <main
       dir={isRTL ? "rtl" : "ltr"}
       lang={language}
-      className="overflow-hidden bg-white text-[#142B45]"
+      className={`${fontClass} overflow-hidden bg-[#f3fafc] text-[#102b43]`}
     >
-      {/* PAGE HERO */}
-      <section className="relative isolate overflow-hidden bg-[#F0F7FA]">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-28 -top-32 -z-10 h-96 w-96 rounded-full bg-teal-200/40 blur-3xl"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-40 -left-24 -z-10 h-96 w-96 rounded-full bg-sky-200/50 blur-3xl"
-        />
 
-        <div className="mx-auto grid max-w-[1320px] items-center gap-10 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:px-10 lg:py-24">
-          <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-teal-100 bg-white/80 px-4 py-2 text-xs font-bold text-teal-800">
-              <Stethoscope size={16} />
-              {t("eyebrow")}
-            </div>
+      <Hero/>
 
-            <h1 className="max-w-3xl text-[40px] font-extrabold leading-[1.1] tracking-[-0.05em] sm:text-5xl lg:text-[64px]">
-              {t("title")}{" "}
-              <span className="text-teal-700">{t("highlight")}</span>
-            </h1>
+      {/* PROFILE & CREDENTIALS */}
+      <section className="border-y border-[#e0edf2] bg-white/65 px-4 py-16 sm:px-7 sm:py-20 lg:px-10 lg:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+          <div className="relative overflow-hidden rounded-[26px] bg-[#087f86] p-7 text-white sm:p-9 lg:p-11">
+            <div className="pointer-events-none absolute -end-20 -top-24 h-72 w-72 rounded-full border border-white/15" />
+            <div className="pointer-events-none absolute -end-8 -top-12 h-48 w-48 rounded-full border border-white/10" />
 
-            <p className="mt-6 max-w-2xl text-sm leading-8 text-slate-600 sm:text-base">
-              {t("subtitle")}
-            </p>
+            <div className="relative">
+              <Eyebrow>{t.profileLabel}</Eyebrow>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                to="/appointment"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-teal-700 px-6 text-sm font-bold text-white transition hover:bg-teal-800"
-              >
-                {t("appointment")}
-                <ArrowUpRight size={17} />
-              </Link>
+              <h2 className="mt-5 max-w-xl text-[28px] font-extrabold leading-[1.2] tracking-[-0.045em] text-white sm:text-[35px]">
+                {t.profileTitle}
+              </h2>
 
-              <Link
-                to="/specialties"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 text-sm font-bold transition hover:border-teal-200 hover:bg-teal-50"
-              >
-                {t("explore")}
-                <ArrowRight size={17} className="text-teal-700" />
-              </Link>
-            </div>
+              <p className="mt-5 text-[14px] leading-7 text-white/85 sm:text-[15px] sm:leading-8">
+                {t.profileText}
+              </p>
 
-            <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3 text-xs text-slate-500">
-              <span className="inline-flex items-center gap-2">
-                <CheckCircle2 size={15} className="text-teal-700" />
-                {t("qualification")}
-              </span>
-              <span className="inline-flex items-center gap-2">
-                <Building2 size={15} className="text-teal-700" />
-                {t("clinicalPracticeText")}
-              </span>
+              <p className="mt-4 text-[14px] leading-7 text-white/85 sm:text-[15px] sm:leading-8">
+                {t.profileText2}
+              </p>
+
+              <div className="mt-8 flex items-center gap-4 border-t border-white/20 pt-6">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-white">
+                  <Hospital size={23} />
+                </span>
+                <div>
+                  <p className="text-[14px] font-extrabold">
+                    {t.locationName}
+                  </p>
+                  <p className="mt-1 text-[12px] text-white/70">
+                    {t.location}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[460px]">
-            <div className="absolute -right-3 top-7 h-[78%] w-[75%] rounded-[32px] border border-teal-200 sm:-right-5 sm:top-10" />
-
-            <div className="relative aspect-[4/4.5] max-h-[550px] overflow-hidden rounded-[30px] bg-[#DCE9ED] shadow-[0_25px_70px_rgba(20,43,69,0.15)] sm:rounded-[38px]">
-              <img
-                src="/images/images.jpg"
-                alt="Dr. Khalid Khan Zadran, Consultant Neurosurgeon"
-                className="h-full w-full object-cover object-center"
-                loading="eager"
-              />
-
-              <div className="absolute inset-0 bg-gradient-to-t from-[#10263D]/80 via-transparent to-[#10263D]/5" />
-
-              <div className="absolute left-4 right-4 top-4 rounded-2xl border border-white/20 bg-white/90 p-4 backdrop-blur-md sm:left-6 sm:right-6 sm:top-6">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
-                    <Brain size={24} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-500">
-                      {t("profileLabel")}
-                    </p>
-                    <p className="mt-1 text-sm font-extrabold">
-                      Dr. Khalid Khan Zadran
-                    </p>
-                  </div>
-                </div>
+          <div>
+            <div className="mb-7 flex items-center gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#e0f2f3] text-[#087f86]">
+                <GraduationCap size={28} />
               </div>
-
-              <div className="absolute bottom-5 left-4 right-4 rounded-2xl border border-white/20 bg-[#10263D]/80 p-5 text-white backdrop-blur-xl sm:bottom-6 sm:left-6 sm:right-6">
-                <p className="text-xs text-teal-300">{t("clinicalPractice")}</p>
-                <h2 className="mt-2 text-lg font-extrabold">
-                  {t("clinicName")}
+              <div>
+                <h2 className="text-[25px] font-extrabold leading-tight tracking-[-0.04em] text-[#102b43] sm:text-[30px]">
+                  {t.credentials}
                 </h2>
-                <p className="mt-1 text-xs text-slate-300">
-                  {t("clinicLocation")}
+                <p className="mt-2 text-[13px] text-[#526d86]">
+                  {t.credentialsSub}
                 </p>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* PROFESSIONAL SUMMARY */}
-      <section className="bg-white py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto grid max-w-[1320px] gap-12 px-5 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20 lg:px-10">
-          <div>
-            <SectionHeading
-              eyebrow="profileLabel"
-              title="profileTitle"
-              highlight=""
-              t={t}
-            />
-
-            <div className="mt-6 space-y-4 text-sm leading-8 text-slate-600">
-              <p>{t("paragraph1")}</p>
-              <p>{t("paragraph2")}</p>
-              <p>{t("paragraph3")}</p>
+            <div className="space-y-3">
+              {t.qualifications.map((qualification, index) => (
+                <div
+                  key={qualification}
+                  className="group flex items-start gap-4 rounded-2xl border border-[#dceaf0] bg-white p-4 transition duration-300 hover:border-[#9ecfd3] hover:shadow-[0_10px_30px_rgba(16,43,67,0.05)] sm:p-5"
+                >
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#e2f4f4] text-[#087f86] transition group-hover:bg-[#087f86] group-hover:text-white">
+                    {index === 0 ? <Award size={17} /> : <Check size={17} />}
+                  </span>
+                  <p className="pt-1 text-[14px] font-semibold leading-6 text-[#31566f] sm:text-[15px]">
+                    {qualification}
+                  </p>
+                </div>
+              ))}
             </div>
 
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link
-                to="/specialties"
-                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#142B45] px-5 text-sm font-bold text-white transition hover:bg-teal-800"
-              >
-                {t("explore")}
-                <ArrowUpRight size={16} />
-              </Link>
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            {[
-              {
-                icon: GraduationCap,
-                title: "qualification",
-                description: "qualificationText",
-              },
-              {
-                icon: Award,
-                title: "memberships",
-                description: "membershipsText",
-              },
-              {
-                icon: Stethoscope,
-                title: "clinicalPractice",
-                description: "clinicalPracticeText",
-              },
-              {
-                icon: Building2,
-                title: "location",
-                description: "locationText",
-              },
-            ].map((item) => {
-              const Icon = item.icon;
-
-              return (
-                <div
-                  key={item.title}
-                  className="rounded-[22px] border border-slate-100 bg-[#F6FAFC] p-5 transition hover:border-teal-200 hover:shadow-md sm:p-6"
-                >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-teal-700 shadow-sm">
-                    <Icon size={23} />
-                  </div>
-
-                  <h3 className="mt-5 text-sm font-extrabold">
-                    {t(item.title)}
-                  </h3>
-
-                  <p className="mt-2 text-xs leading-6 text-slate-500">
-                    {t(item.description)}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* QUALIFICATIONS */}
-      <section className="bg-[#F3F7FA] py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-10">
-          <SectionHeading
-            eyebrow="qualificationsEyebrow"
-            title="qualificationsTitle"
-            highlight=""
-            description="qualificationsText"
-            t={t}
-          />
-
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {qualifications.map((item, index) => {
-              const Icon = item.icon;
-
-              return (
-                <div
-                  key={item.title}
-                  className="group rounded-[22px] border border-slate-200/80 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-lg"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-700 transition group-hover:bg-teal-700 group-hover:text-white">
-                      <Icon size={23} />
-                    </div>
-
-                    <span className="text-xs font-bold text-slate-300">
-                      0{index + 1}
-                    </span>
-                  </div>
-
-                  <h3 className="mt-5 text-lg font-extrabold">
-                    {t(item.title)}
-                  </h3>
-
-                  <p className="mt-2 text-sm leading-6 text-slate-500">
-                    {t(item.detail)}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-6 flex items-start gap-3 rounded-2xl border border-amber-100 bg-amber-50 p-4 text-xs leading-6 text-amber-900">
-            <ShieldCheck size={19} className="mt-0.5 shrink-0" />
-            <p>{t("disclaimer")}</p>
-          </div>
-        </div>
-      </section>
-
-      {/* PROFESSIONAL AFFILIATIONS */}
-      <section className="bg-white py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-10">
-          <SectionHeading
-            eyebrow="membershipsEyebrow"
-            title="membershipsTitle"
-            highlight=""
-            description="membershipsText"
-            t={t}
-          />
-
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            {affiliations.map((item) => (
-              <div
-                key={item.acronym}
-                className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-[#F8FAFC] p-5 transition hover:border-teal-200 hover:bg-teal-50/40 sm:p-6"
-              >
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white text-sm font-extrabold text-teal-700 shadow-sm">
-                  {item.acronym}
-                </div>
-
-                <div className="min-w-0">
-                  <h3 className="text-sm font-extrabold leading-6">
-                    {t(item.title)}
-                  </h3>
-                  <p className="mt-2 text-xs leading-5 text-slate-500">
-                    {item.acronym}
-                  </p>
-                </div>
-              </div>
-            ))}
+            <p className="mt-5 rounded-xl bg-[#f0f7f9] px-4 py-3 text-[11px] leading-6 text-[#71879a]">
+              {t.verification}
+            </p>
           </div>
         </div>
       </section>
 
       {/* EXPERTISE */}
-      <section className="bg-[#F3F7FA] py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-10">
+      <section className="px-4 py-16 sm:px-7 sm:py-20 lg:px-10 lg:py-24">
+        <div className="mx-auto max-w-7xl">
           <SectionHeading
-            eyebrow="expertiseEyebrow"
-            title="expertiseTitle"
-            highlight=""
-            description="expertiseText"
-            t={t}
+            eyebrow={t.expertiseEyebrow}
+            title={t.expertiseTitle}
+            description={t.expertiseIntro}
           />
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {expertise.map((item, index) => {
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {t.specialties.map((item, index) => {
               const Icon = item.icon;
 
               return (
-                <div
+                <article
                   key={item.title}
-                  className="rounded-[22px] border border-slate-200/70 bg-white p-6 transition hover:-translate-y-1 hover:shadow-lg"
+                  className="group relative overflow-hidden rounded-[22px] border border-[#dceaf0] bg-white p-6 shadow-[0_6px_25px_rgba(16,43,67,0.025)] transition duration-300 hover:-translate-y-1.5 hover:border-[#a6d5d8] hover:shadow-[0_20px_45px_rgba(16,43,67,0.08)] sm:p-7"
                 >
-                  <span className="text-xs font-bold tracking-widest text-teal-700">
-                    0{index + 1}
-                  </span>
-
-                  <div className="mt-4 flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
-                    <Icon size={24} />
+                  <div className="mb-7 flex items-center justify-between">
+                    <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e2f4f4] text-[#087f86] transition duration-300 group-hover:bg-[#087f86] group-hover:text-white">
+                      <Icon size={25} strokeWidth={1.7} />
+                    </span>
+                    <span className="text-[12px] font-extrabold tracking-[0.15em] text-[#9bb8c4]">
+                      0{index + 1}
+                    </span>
                   </div>
 
-                  <h3 className="mt-5 text-base font-extrabold">
-                    {t(item.title)}
+                  <h3 className="text-[18px] font-extrabold leading-snug tracking-[-0.025em] text-[#102b43]">
+                    {item.title}
                   </h3>
 
-                  <p className="mt-3 text-xs leading-6 text-slate-500">
-                    {t(item.description)}
+                  <p className="mt-3 text-[14px] leading-7 text-[#526d86]">
+                    {item.text}
                   </p>
-                </div>
+
+                  <div className="mt-6 h-1 w-10 rounded-full bg-[#b6e2e3] transition-all duration-300 group-hover:w-16 group-hover:bg-[#087f86]" />
+                </article>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* APPROACH TO CARE */}
-      <section className="bg-white py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-10">
-          <SectionHeading
-            eyebrow="approachEyebrow"
-            title="approachTitle"
-            highlight=""
-            description="approachText"
-            t={t}
-          />
+      {/* CARE PHILOSOPHY */}
+      <section className="border-y border-[#dceaf0] bg-white/70 px-4 py-16 sm:px-7 sm:py-20 lg:px-10 lg:py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid items-start gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+            <div>
+              <SectionHeading
+                eyebrow={t.whyEyebrow}
+                title={t.whyTitle}
+                description={t.whyIntro}
+              />
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {approaches.map((item) => {
-              const Icon = item.icon;
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e0f2f3] text-[#087f86]">
+                <Target size={26} />
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {t.reasons.map((item, index) => {
+                const Icon = item.icon;
+
+                return (
+                  <article
+                    key={item.title}
+                    className="rounded-2xl border border-[#dceaf0] bg-[#f8fcfd] p-5 transition duration-300 hover:border-[#acd6da] hover:bg-white sm:p-6"
+                  >
+                    <div className="mb-5 flex items-center justify-between">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#e0f2f3] text-[#087f86]">
+                        <Icon size={21} />
+                      </span>
+                      <span className="text-[11px] font-extrabold tracking-[0.12em] text-[#91aab8]">
+                        0{index + 1}
+                      </span>
+                    </div>
+                    <h3 className="text-[16px] font-extrabold leading-snug text-[#102b43]">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-[13px] leading-6 text-[#526d86]">
+                      {item.text}
+                    </p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TREATMENT APPROACH */}
+      <section className="px-4 py-16 sm:px-7 sm:py-20 lg:px-10 lg:py-24">
+        <div className="mx-auto grid max-w-7xl items-start gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <div>
+            <SectionHeading
+              eyebrow={t.approachEyebrow}
+              title={t.approachTitle}
+              description={t.approachText}
+            />
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#d5e8ed] bg-white px-4 py-2.5">
+              <ShieldCheck size={17} className="text-[#087f86]" />
+              <span className="text-[12px] font-bold text-[#31566f]">
+                {t.specialty}
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {t.steps.map((step, index) => {
+              const isActive = activeStep === index;
 
               return (
-                <div
-                  key={item.title}
-                  className="rounded-[22px] border border-slate-100 bg-[#F6FAFC] p-5 sm:p-6"
+                <button
+                  key={step.number}
+                  type="button"
+                  onClick={() => setActiveStep(index)}
+                  aria-expanded={isActive}
+                  className={`w-full rounded-[20px] border p-5 text-start transition duration-300 sm:p-6 ${
+                    isActive
+                      ? "border-[#087f86] bg-[#087f86] text-white shadow-[0_15px_35px_rgba(8,127,134,0.15)]"
+                      : "border-[#dceaf0] bg-white text-[#102b43] hover:border-[#b4d9dd]"
+                  }`}
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-teal-700 shadow-sm">
-                    <Icon size={23} />
+                  <div className="flex items-start gap-4">
+                    <span
+                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-[13px] font-extrabold ${
+                        isActive
+                          ? "bg-white/15 text-white"
+                          : "bg-[#e2f4f4] text-[#087f86]"
+                      }`}
+                    >
+                      {step.number}
+                    </span>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-3">
+                        <h3 className="text-[16px] font-extrabold sm:text-[17px]">
+                          {step.title}
+                        </h3>
+                        <ChevronDown
+                          size={19}
+                          className={`shrink-0 transition-transform duration-300 ${
+                            isActive ? "rotate-180 text-white" : "text-[#829baa]"
+                          }`}
+                        />
+                      </div>
+
+                      <p
+                        className={`mt-3 text-[13px] leading-7 sm:text-[14px] ${
+                          isActive ? "text-white/80" : "text-[#526d86]"
+                        }`}
+                      >
+                        {step.text}
+                      </p>
+                    </div>
                   </div>
-
-                  <h3 className="mt-5 text-sm font-extrabold">
-                    {t(item.title)}
-                  </h3>
-
-                  <p className="mt-3 text-xs leading-6 text-slate-500">
-                    {t(item.description)}
-                  </p>
-                </div>
+                </button>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* CLINIC CTA */}
-      <section className="bg-white px-5 pb-16 sm:px-8 sm:pb-20 lg:px-10 lg:pb-24">
-        <div className="relative mx-auto max-w-[1320px] overflow-hidden rounded-[28px] bg-[#142B45] px-6 py-10 text-white sm:px-10 sm:py-14 lg:px-14 lg:py-16">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-teal-500/20 blur-3xl"
-          />
+      {/* PROFESSIONAL MILESTONE */}
+      <section className="px-4 py-6 sm:px-7 sm:py-10 lg:px-10">
+        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[28px] bg-[#102b43] px-6 py-9 text-white sm:px-10 sm:py-12 lg:px-14 lg:py-14">
+          <div className="pointer-events-none absolute -end-24 -top-28 h-80 w-80 rounded-full border border-white/10" />
+          <div className="pointer-events-none absolute -end-4 -top-14 h-52 w-52 rounded-full border border-white/10" />
+          <div className="pointer-events-none absolute bottom-0 start-0 h-1 w-2/5 bg-[#087f86]" />
 
-          <div className="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div className="max-w-2xl">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-300">
-                {t("clinicEyebrow")}
-              </p>
+          <div className="relative grid items-center gap-8 md:grid-cols-[1fr_auto] md:gap-12">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.07] px-3.5 py-2 text-[11px] font-bold text-[#b7eeee]">
+                <Award size={15} />
+                {t.milestoneEyebrow}
+              </div>
 
-              <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-[-0.04em] sm:text-4xl">
-                {t("clinicTitle")}
+              <h2 className="mt-5 max-w-3xl text-[29px] font-extrabold leading-[1.18] tracking-[-0.04em] text-white sm:text-[37px] lg:text-[43px]">
+                {t.milestoneTitle}
               </h2>
 
-              <p className="mt-4 text-sm leading-7 text-slate-300">
-                {t("clinicText")}
+              <p className="mt-5 max-w-3xl text-[14px] leading-7 text-white/75 sm:text-[15px] sm:leading-8">
+                {t.milestoneText}
               </p>
 
-              <div className="mt-6 flex items-start gap-3">
-                <Building2 size={21} className="mt-1 shrink-0 text-teal-300" />
+              <p className="mt-4 max-w-3xl text-[11px] leading-6 text-white/50">
+                {t.verification}
+              </p>
+            </div>
+
+            <div className="flex h-28 w-28 items-center justify-center rounded-[30px] border border-white/15 bg-white/[0.07] sm:h-36 sm:w-36">
+              <div className="flex h-20 w-20 items-center justify-center rounded-[24px] bg-[#087f86] text-white sm:h-24 sm:w-24">
+                <GraduationCap size={43} strokeWidth={1.5} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* RESEARCH */}
+      <section className="px-4 py-16 sm:px-7 sm:py-20 lg:px-10 lg:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          <div className="group relative min-h-[300px] overflow-hidden rounded-[26px] bg-[#dceef2] sm:min-h-[400px]">
+            <img
+              src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=85"
+              alt="Medical professionals collaborating in a clinical environment"
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#102b43]/75 via-transparent to-transparent" />
+
+            <div className="absolute inset-x-4 bottom-4 rounded-2xl border border-white/60 bg-white/95 p-4 shadow-xl backdrop-blur-md sm:inset-x-6 sm:bottom-6 sm:p-5">
+              <div className="flex items-center gap-4">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#e2f4f4] text-[#087f86]">
+                  <Microscope size={23} />
+                </span>
                 <div>
-                  <p className="text-base font-extrabold">{t("clinicName")}</p>
-                  <p className="mt-1 text-sm text-slate-300">
-                    {t("clinicLocation")}
+                  <p className="text-[15px] font-extrabold text-[#102b43]">
+                    {t.researchTitle}
                   </p>
-                  <p className="mt-3 text-xs text-slate-300">
-                    {t("phoneLabel")}: +93 78 765 4751
+                  <p className="mt-1 text-[12px] text-[#526d86]">
+                    {t.researchEyebrow}
                   </p>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-              <Link
-                to="/appointment"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-teal-600 px-6 text-sm font-bold text-white transition hover:bg-teal-500"
-              >
-                {t("appointment")}
-                <ArrowUpRight size={17} />
-              </Link>
+          <div>
+            <SectionHeading
+              eyebrow={t.researchEyebrow}
+              title={t.researchTitle}
+              description={t.researchText}
+            />
+
+            <div className="space-y-3">
+              {t.researchPoints.map((point) => (
+                <div
+                  key={point}
+                  className="flex items-start gap-3 rounded-xl border border-[#dceaf0] bg-white p-4 sm:p-5"
+                >
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#e2f4f4] text-[#087f86]">
+                    <Check size={14} />
+                  </span>
+                  <p className="text-[14px] leading-6 text-[#31566f]">
+                    {point}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <Link
+              to="/research"
+              className="mt-6 inline-flex items-center gap-2 text-[13px] font-extrabold text-[#087f86] transition hover:gap-3 hover:text-[#06676e]"
+            >
+              {language === "en"
+                ? "Explore research"
+                : language === "fa"
+                  ? "مشاهده تحقیقات"
+                  : "څېړنې وګورئ"}
+              <ArrowRight size={16} className={isRTL ? "rotate-180" : ""} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* APPOINTMENT CTA */}
+      <section className="px-4 pb-16 pt-2 sm:px-7 sm:pb-20 lg:px-10 lg:pb-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="relative overflow-hidden rounded-[28px] border border-[#d5e8ed] bg-white p-6 shadow-[0_20px_60px_rgba(16,43,67,0.045)] sm:p-10 lg:p-12">
+            <div className="pointer-events-none absolute -end-12 -top-20 h-64 w-64 rounded-full bg-[#e2f4f4] blur-3xl" />
+
+            <div className="relative flex flex-col gap-7 md:flex-row md:items-center md:justify-between">
+              <div className="max-w-2xl">
+                <Eyebrow>{t.contactEyebrow}</Eyebrow>
+
+                <h2 className="mt-4 text-[30px] font-extrabold leading-[1.15] tracking-[-0.045em] text-[#102b43] sm:text-[38px]">
+                  {t.contactTitle}
+                </h2>
+
+                <p className="mt-4 text-[14px] leading-7 text-[#526d86] sm:text-[15px] sm:leading-8">
+                  {t.contactText}
+                </p>
+
+                <div className="mt-5 flex flex-wrap items-center gap-2 text-[12px] font-semibold text-[#526d86]">
+                  <MapPin size={16} className="text-[#087f86]" />
+                  {t.locationName}
+                  <span className="text-[#a2b7c2]">·</span>
+                  {t.location}
+                </div>
+              </div>
 
               <Link
                 to="/contact"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/20 px-6 text-sm font-bold text-white transition hover:bg-white/10"
+                className="group inline-flex min-h-14 shrink-0 items-center justify-center gap-3 rounded-xl bg-[#087f86] px-6 py-4 text-[13px] font-extrabold text-white shadow-lg shadow-[#087f86]/15 transition duration-300 hover:-translate-y-1 hover:bg-[#06676e] hover:shadow-xl sm:px-7"
               >
-                {t("contactPage")}
-                <ArrowRight size={17} />
+                <Stethoscope size={18} />
+                {t.contactButton}
+                <ArrowRight
+                  size={16}
+                  className={`transition-transform group-hover:translate-x-1 ${isRTL ? "rotate-180" : ""}`}
+                />
               </Link>
             </div>
           </div>
-        </div>
 
-        <p className="mx-auto mt-6 max-w-4xl text-center text-[11px] leading-6 text-slate-400">
-          {t("medicalDisclaimer")}
-        </p>
+          <div className="mt-6 flex flex-col gap-2 text-center text-[11px] text-[#71879a] sm:flex-row sm:items-center sm:justify-between sm:text-start">
+            <p className="font-semibold">
+              Dr. Khalid Khan Zadran · {t.specialty}
+            </p>
+            <p>{t.footerNote}</p>
+          </div>
+        </div>
       </section>
-    </div>
+    </main>
   );
 }

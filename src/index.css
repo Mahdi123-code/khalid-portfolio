@@ -1,24 +1,9 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Vazirmatn:wght@400;500;600;700;800;900&display=swap");
 
 @import "tailwindcss";
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  font-family: "Manrope", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-::selection {
-  background: #078A83;
-  color: #ffffff;
+@theme {
+  --font-sans: "Inter", "Vazirmatn", sans-serif;
+  --font-english: "Inter", sans-serif;
+  --font-persian: "Vazirmatn", sans-serif;
 }

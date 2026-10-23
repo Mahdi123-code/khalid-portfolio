@@ -1,272 +1,240 @@
 
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router";
+import { Link, NavLink, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import {
   Brain,
+  Search,
   Menu,
   X,
-  CalendarCheck,
-  ArrowUpRight,
-  ChevronRight,
+  CalendarDays,
   ChevronDown,
-  Languages,
-  Check,
+  Globe,
+  ArrowUpRight,
 } from "lucide-react";
 
-const navLinks = [
-  { key: "home", href: "/", type: "route" },
-  { key: "about", href: "/about", type: "route" },
-  { key: "specialties", href: "#specialties", type: "section" },
-  { key: "experience", href: "/experience", type: "route" },
-  { key: "research", href: "#research", type: "section" },
-  { key: "contact", href: "#contact", type: "section" },
+const navigation = [
+  {
+    to: "/",
+    label: "Home",
+    fa: "صفحه اصلی",
+    ps: "کور",
+  },
+  {
+    to: "/about",
+    label: "About",
+    fa: "درباره ما",
+    ps: "زموږ په اړه",
+  },
+  {
+    to: "/services",
+    label: "Specialties",
+    fa: "تخصص‌ها",
+    ps: "تخصصونه",
+  },
+  {
+    to: "/research",
+    label: "Research",
+    fa: "تحقیقات",
+    ps: "څېړنې",
+  },
+  {
+    to: "/contact",
+    label: "Contact",
+    fa: "تماس",
+    ps: "اړیکه",
+  },
 ];
 
 const languages = [
-  { code: "en", label: "English", native: "English" },
-  { code: "fa", label: "Dari", native: "دری" },
-  { code: "ps", label: "Pashto", native: "پښتو" },
+  { code: "en", short: "EN", label: "English" },
+  { code: "fa", short: "دری", label: "فارسی / دری" },
+  { code: "ps", short: "پښتو", label: "پښتو" },
 ];
 
+const navLabels = {
+  en: { appointment: "Book Appointment", search: "Search" },
+  fa: { appointment: "درخواست نوبت", search: "جستجو" },
+  ps: { appointment: "د ملاقات غوښتنه", search: "لټون" },
+};
+
 export default function Navbar() {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const location = useLocation();
 
-  const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
-  const currentLanguage = languages.find(
-    (language) => language.code === i18n.resolvedLanguage
-  ) || languages[0];
+  const language = (
+    i18n.resolvedLanguage || i18n.language || "en"
+  )
+    .split("-")[0]
+    .toLowerCase();
 
-  const isRTL = currentLanguage.code === "fa" || currentLanguage.code === "ps";
+  const currentLanguage = languages.some(
+    (item) => item.code === language
+  )
+    ? language
+    : "en";
 
-  const changeLanguage = async (code) => {
-    await i18n.changeLanguage(code);
-    setLanguageOpen(false);
-    setMenuOpen(false);
-  };
+  const isRTL = ["fa", "ps"].includes(currentLanguage);
+  const labels = navLabels[currentLanguage];
 
-  const closeMenu = () => {
-    setMenuOpen(false);
-    setLanguageOpen(false);
+  const getLabel = (item) => {
+    if (currentLanguage === "fa") return item.fa;
+    if (currentLanguage === "ps") return item.ps;
+    return item.label;
   };
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-
-      const sections = navLinks
-        .filter((item) => item.type === "section")
-        .map((item) => document.querySelector(item.href))
-        .filter(Boolean);
-
-      let current = "home";
-
-      sections.forEach((section) => {
-        if (window.scrollY >= section.offsetTop - 180) {
-          const matched = navLinks.find(
-            (item) => item.href === `#${section.id}`
-          );
-
-          if (matched) current = matched.key;
-        }
-      });
-
-      setActiveSection(current);
+      setScrolled(window.scrollY > 25);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [location.pathname]);
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
 
-  useEffect(() => {
-    setMenuOpen(false);
-    setLanguageOpen(false);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [menuOpen]);
-
-  useEffect(() => {
-    const closeOnEscape = (event) => {
-      if (event.key === "Escape") {
-        setMenuOpen(false);
-        setLanguageOpen(false);
-      }
-    };
-
-    window.addEventListener("keydown", closeOnEscape);
-
-    return () => window.removeEventListener("keydown", closeOnEscape);
+    return () =>
+      window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const linkClass = (key) =>
-    `relative whitespace-nowrap py-2 text-[13px] font-semibold transition-colors duration-300 ${
-      activeSection === key
-        ? "text-teal-700"
-        : "text-slate-600 hover:text-teal-700"
-    }`;
+  useEffect(() => {
+    setMobileOpen(false);
+    setLanguageOpen(false);
+    setSearchOpen(false);
+  }, [location.pathname]);
 
-  const renderLanguageOptions = (mobile = false) => (
-    <div className={mobile ? "grid grid-cols-3 gap-2" : "space-y-1"}>
-      {languages.map((language) => {
-        const selected = currentLanguage.code === language.code;
+  useEffect(() => {
+    document.documentElement.dir = isRTL ? "rtl" : "ltr";
+    document.documentElement.lang = currentLanguage;
+  }, [isRTL, currentLanguage]);
 
-        return (
-          <button
-            key={language.code}
-            type="button"
-            onClick={() => changeLanguage(language.code)}
-            aria-pressed={selected}
-            className={
-              mobile
-                ? `flex min-h-[76px] flex-col items-center justify-center gap-2 rounded-2xl border px-2 transition-all ${
-                    selected
-                      ? "border-teal-200 bg-teal-50 text-teal-800"
-                      : "border-slate-200 bg-white text-slate-600 hover:border-teal-200 hover:bg-slate-50"
-                  }`
-                : `flex w-full items-center justify-between gap-4 rounded-xl px-3 py-3 text-left transition-colors ${
-                    selected
-                      ? "bg-teal-50 text-teal-800"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-teal-700"
-                  }`
-            }
-          >
-            <span className={mobile ? "text-center" : "flex flex-col"}>
-              <span className="block text-sm font-bold">
-                {language.native}
-              </span>
+  const changeLanguage = (code) => {
+    i18n.changeLanguage(code);
+    setLanguageOpen(false);
+  };
 
-              <span
-                className={`block text-[11px] ${
-                  mobile ? "mt-1" : "mt-0.5"
-                } ${selected ? "text-teal-700" : "text-slate-400"}`}
-              >
-                {language.label}
-              </span>
-            </span>
+  const handleSearch = (event) => {
+    event.preventDefault();
 
-            {selected && (
-              <Check
-                size={16}
-                className={mobile ? "hidden" : "shrink-0 text-teal-700"}
-              />
-            )}
-          </button>
-        );
-      })}
-    </div>
-  );
+    const query = searchValue.trim();
+
+    if (!query) return;
+
+    window.location.href = `/search?q=${encodeURIComponent(query)}`;
+  };
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 ${
+      dir={isRTL ? "rtl" : "ltr"}
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "border-slate-200/80 bg-white/95 shadow-[0_8px_30px_rgba(20,43,69,0.06)] backdrop-blur-xl"
-          : "border-slate-100 bg-white"
+          ? "border-b border-white/70 bg-white/95 shadow-[0_6px_30px_rgba(15,55,80,0.08)] backdrop-blur-2xl"
+          : "border-b border-white/20 bg-transparent"
       }`}
     >
-      <nav
-        aria-label="Main navigation"
-        className="mx-auto flex h-[76px] max-w-[1400px] items-center justify-between gap-3 px-4 sm:px-7 lg:h-[84px] lg:px-10"
+      <div
+        className={`mx-auto flex max-w-[1510px] items-center justify-between gap-3 px-4 transition-all duration-300 sm:px-7 lg:px-10 xl:px-12 ${
+          scrolled ? "h-[66px]" : "h-[82px]"
+        }`}
       >
         {/* BRAND */}
         <Link
           to="/"
-          onClick={() => {
-            closeMenu();
-            setActiveSection("home");
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
-          className="group flex min-w-0 items-center gap-2.5 sm:gap-3"
           aria-label="Dr. Khalid Khan Zadran home"
+          className="group flex shrink-0 items-center gap-2.5"
         >
-          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-700 ring-1 ring-teal-100 transition-all duration-300 group-hover:bg-teal-600 group-hover:text-white sm:h-12 sm:w-12">
-            <Brain size={25} strokeWidth={1.8} />
-
-            <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-teal-500" />
+          <span className="flex h-10 w-10 items-center justify-center text-[#07878B] transition-transform duration-300 group-hover:scale-105 sm:h-12 sm:w-12">
+            <Brain
+              size={43}
+              strokeWidth={2.3}
+              className="h-full w-full"
+            />
           </span>
 
-          <span className="flex min-w-0 flex-col">
-            <span className="truncate text-[12px] font-extrabold tracking-tight text-[#142B45] sm:text-base">
-              Dr. Khalid Khan Zadran
+          <span className="flex flex-col leading-tight">
+            <span className="whitespace-nowrap text-[13px] font-extrabold tracking-[-0.45px] text-[#123C52] sm:text-base lg:text-[18px]">
+              Dr. Khalid Zadran
             </span>
 
-            <span className="mt-1 flex items-center gap-1.5 text-[8px] font-bold uppercase tracking-[0.1em] text-teal-700 sm:text-[10px] sm:tracking-[0.12em]">
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500" />
-              {t("nav.title")}
+            <span className="mt-1 text-[10px] font-medium tracking-wide text-slate-500 sm:text-xs">
+              Consultant Neurosurgeon
             </span>
           </span>
         </Link>
 
         {/* DESKTOP NAVIGATION */}
-        <div className="hidden items-center gap-4 lg:flex xl:gap-7">
-          {navLinks.map((item) =>
-            item.type === "route" ? (
-              <Link
-                key={item.key}
-                to={item.href}
-                onClick={() => {
-                  setActiveSection(item.key);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-                className={linkClass(item.key)}
-              >
-                {t(`nav.${item.key}`)}
-                <span
-                  className={`absolute -bottom-1 left-0 h-[2px] rounded-full bg-teal-600 transition-all duration-300 ${
-                    activeSection === item.key ? "w-full" : "w-0"
-                  }`}
-                />
-              </Link>
-            ) : (
-              <a
-                key={item.key}
-                href={item.href}
-                onClick={() => setActiveSection(item.key)}
-                className={linkClass(item.key)}
-              >
-                {t(`nav.${item.key}`)}
-                <span
-                  className={`absolute -bottom-1 left-0 h-[2px] rounded-full bg-teal-600 transition-all duration-300 ${
-                    activeSection === item.key ? "w-full" : "w-0"
-                  }`}
-                />
-              </a>
-            )
-          )}
-        </div>
+        <nav
+          aria-label="Main navigation"
+          className="hidden items-center gap-0.5 xl:flex"
+        >
+          {navigation.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === "/"}
+              className={({ isActive }) =>
+                `rounded-full px-4 py-3 text-[13px] font-semibold transition-all duration-200 2xl:px-5 ${
+                  isActive
+                    ? "bg-[#DDF3F3]/90 text-[#007F83]"
+                    : "text-[#173C55] hover:bg-white/65 hover:text-[#00858A]"
+                }`
+              }
+            >
+              {getLabel(item)}
+            </NavLink>
+          ))}
+        </nav>
 
-        {/* DESKTOP ACTIONS */}
-        <div className="hidden items-center gap-3 lg:flex">
-          {/* Language selector */}
+        {/* RIGHT ACTIONS */}
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
+          {/* SEARCH */}
+          <button
+            type="button"
+            aria-label="Toggle search"
+            aria-expanded={searchOpen}
+            onClick={() => {
+              setSearchOpen((value) => !value);
+              setLanguageOpen(false);
+              setMobileOpen(false);
+            }}
+            className="flex h-9 w-9 items-center justify-center rounded-full text-[#174A60] transition hover:bg-white/70 sm:h-10 sm:w-10"
+          >
+            {searchOpen ? (
+              <X size={19} />
+            ) : (
+              <Search size={19} />
+            )}
+          </button>
+
+          {/* LANGUAGE SELECTOR */}
           <div className="relative">
             <button
               type="button"
-              onClick={() => setLanguageOpen((open) => !open)}
-              aria-label={t("nav.language")}
+              aria-label="Choose language"
               aria-expanded={languageOpen}
-              className="flex h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-[#142B45] transition-all duration-300 hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700"
+              onClick={() => {
+                setLanguageOpen((value) => !value);
+                setSearchOpen(false);
+              }}
+              className="flex h-9 items-center gap-1.5 rounded-full border border-white/80 bg-white/80 px-2.5 text-xs font-semibold text-[#244B60] shadow-sm backdrop-blur-md transition hover:bg-white sm:h-10 sm:gap-2 sm:px-3"
             >
-              <Languages size={18} />
-
-              <span className="text-xs font-bold">
-                {currentLanguage.native}
+              <Globe size={15} />
+              <span>
+                {
+                  languages.find(
+                    (item) => item.code === currentLanguage
+                  )?.short
+                }
               </span>
-
               <ChevronDown
-                size={14}
+                size={13}
                 className={`transition-transform ${
                   languageOpen ? "rotate-180" : ""
                 }`}
@@ -274,167 +242,147 @@ export default function Navbar() {
             </button>
 
             {languageOpen && (
-              <>
-                <button
-                  type="button"
-                  aria-label="Close language menu"
-                  className="fixed inset-0 z-40 cursor-default"
-                  onClick={() => setLanguageOpen(false)}
-                />
-
-                <div className="absolute right-0 top-[calc(100%+12px)] z-50 w-52 rounded-2xl border border-slate-100 bg-white p-2 shadow-[0_18px_55px_rgba(20,43,69,0.14)]">
-                  <p className="px-3 pb-2 pt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
-                    {t("nav.language")}
-                  </p>
-
-                  {renderLanguageOptions()}
-                </div>
-              </>
+              <div className="absolute end-0 top-12 z-[60] w-44 overflow-hidden rounded-2xl border border-slate-100 bg-white p-1.5 shadow-[0_15px_45px_rgba(15,55,80,0.16)]">
+                {languages.map((item) => (
+                  <button
+                    key={item.code}
+                    type="button"
+                    onClick={() => changeLanguage(item.code)}
+                    className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-start text-xs transition ${
+                      currentLanguage === item.code
+                        ? "bg-[#E6F6F5] font-bold text-[#007F83]"
+                        : "text-slate-700 hover:bg-slate-50"
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                    {currentLanguage === item.code && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#00878B]" />
+                    )}
+                  </button>
+                ))}
+              </div>
             )}
-          </div>
-
-          <a
-            href="#appointment"
-            onClick={() => setActiveSection("contact")}
-            className="group flex h-11 items-center gap-2 rounded-full bg-teal-600 px-4 text-[12px] font-bold text-white shadow-sm shadow-teal-900/10 transition-all duration-300 hover:-translate-y-0.5 hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-700/20 xl:px-5 xl:text-[13px]"
-          >
-            <CalendarCheck size={16} />
-            <span>{t("nav.appointment")}</span>
-            <ArrowUpRight
-              size={15}
-              className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-            />
-          </a>
-        </div>
-
-        {/* MOBILE MENU BUTTON */}
-        <button
-          type="button"
-          onClick={() => {
-            setMenuOpen((open) => !open);
-            setLanguageOpen(false);
-          }}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-navigation"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-[#142B45] transition-all duration-300 hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700 lg:hidden"
-        >
-          {menuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
-      </nav>
-
-      {/* MOBILE BACKDROP */}
-      {menuOpen && (
-        <button
-          type="button"
-          aria-label="Close menu backdrop"
-          onClick={closeMenu}
-          className="fixed inset-0 top-[76px] z-40 cursor-default bg-[#142B45]/30 backdrop-blur-[2px] lg:hidden"
-        />
-      )}
-
-      {/* MOBILE MENU */}
-      <div
-        id="mobile-navigation"
-        aria-hidden={!menuOpen}
-        className={`absolute left-0 right-0 top-full z-50 overflow-y-auto border-t border-slate-100 bg-white shadow-xl transition-all duration-300 lg:hidden ${
-          menuOpen
-            ? "visible max-h-[calc(100dvh-76px)] translate-y-0 opacity-100"
-            : "invisible max-h-0 -translate-y-2 opacity-0"
-        }`}
-      >
-        <div className="mx-auto max-w-[1400px] px-5 pb-6 pt-4 sm:px-8">
-          <div className="mb-3 flex items-center justify-between px-3">
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
-              Navigation
-            </span>
-
-            <span className="rounded-full bg-teal-50 px-3 py-1 text-[10px] font-bold text-teal-700">
-              Brain & Spine Care
-            </span>
-          </div>
-
-          <div className="space-y-1">
-            {navLinks.map((item) =>
-              item.type === "route" ? (
-                <Link
-                  key={item.key}
-                  to={item.href}
-                  tabIndex={menuOpen ? 0 : -1}
-                  onClick={() => {
-                    closeMenu();
-                    setActiveSection(item.key);
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                  className={`flex items-center justify-between rounded-xl px-4 py-3.5 transition-colors ${
-                    activeSection === item.key
-                      ? "bg-teal-50 text-teal-700"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-teal-700"
-                  }`}
-                >
-                  <span className="text-sm font-semibold">
-                    {t(`nav.${item.key}`)}
-                  </span>
-                  <ChevronRight size={17} />
-                </Link>
-              ) : (
-                <a
-                  key={item.key}
-                  href={item.href}
-                  tabIndex={menuOpen ? 0 : -1}
-                  onClick={() => {
-                    closeMenu();
-                    setActiveSection(item.key);
-                  }}
-                  className={`flex items-center justify-between rounded-xl px-4 py-3.5 transition-colors ${
-                    activeSection === item.key
-                      ? "bg-teal-50 text-teal-700"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-teal-700"
-                  }`}
-                >
-                  <span className="text-sm font-semibold">
-                    {t(`nav.${item.key}`)}
-                  </span>
-                  <ChevronRight size={17} />
-                </a>
-              )
-            )}
-          </div>
-
-          {/* MOBILE LANGUAGE SELECTOR */}
-          <div className="mt-5 rounded-2xl border border-slate-200 bg-[#F8FAFB] p-4">
-            <div className="mb-4 flex items-center gap-2">
-              <Languages size={17} className="text-teal-700" />
-
-              <span className="text-xs font-extrabold text-[#142B45]">
-                {t("nav.language")}
-              </span>
-
-              <span className="ml-auto rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-teal-700">
-                {currentLanguage.label}
-              </span>
-            </div>
-
-            {renderLanguageOptions(true)}
           </div>
 
           {/* APPOINTMENT */}
-          <a
-            href="#appointment"
-            tabIndex={menuOpen ? 0 : -1}
-            onClick={closeMenu}
-            className="mt-4 flex min-h-12 items-center justify-center gap-2 rounded-full bg-teal-600 px-3 text-sm font-bold text-white transition-colors hover:bg-teal-700"
+          <Link
+            to="/contact"
+            className="group inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-white/80 bg-[#00878B] px-3 text-[11px] font-bold text-white shadow-[0_5px_18px_rgba(0,119,126,0.14)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#006E74] sm:gap-2.5 sm:px-4 sm:text-xs lg:px-5"
           >
-            <CalendarCheck size={17} />
-            {t("nav.appointment")}
-            <ArrowUpRight size={15} />
-          </a>
+            <CalendarDays size={16} />
+            <span className="hidden sm:inline">
+              {labels.appointment}
+            </span>
+            <span className="sm:hidden">
+              {currentLanguage === "fa"
+                ? "نوبت"
+                : currentLanguage === "ps"
+                  ? "ملاقات"
+                  : "Book"}
+            </span>
+            <ArrowUpRight
+              size={14}
+              className="hidden sm:block"
+            />
+          </Link>
 
-          <p className="mt-4 text-center text-xs text-slate-400">
-            {t("nav.location")}
-          </p>
+          {/* MOBILE MENU */}
+          <button
+            type="button"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            onClick={() => {
+              setMobileOpen((value) => !value);
+              setSearchOpen(false);
+              setLanguageOpen(false);
+            }}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/80 bg-white/75 text-[#16465B] transition hover:bg-white xl:hidden sm:h-10 sm:w-10"
+          >
+            {mobileOpen ? <X size={19} /> : <Menu size={19} />}
+          </button>
         </div>
       </div>
+
+      {/* SEARCH PANEL */}
+      {searchOpen && (
+        <div className="border-t border-slate-100 bg-white/95 px-4 py-4 shadow-lg backdrop-blur-xl">
+          <form
+            onSubmit={handleSearch}
+            className="mx-auto flex max-w-2xl gap-2"
+          >
+            <input
+              autoFocus
+              type="search"
+              value={searchValue}
+              onChange={(event) =>
+                setSearchValue(event.target.value)
+              }
+              placeholder={
+                currentLanguage === "fa"
+                  ? "جستجو..."
+                  : currentLanguage === "ps"
+                    ? "لټون..."
+                    : "Search doctors and services..."
+              }
+              className="min-w-0 flex-1 rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#00878B] focus:bg-white"
+            />
+            <button
+              type="submit"
+              className="rounded-full bg-[#00878B] px-5 text-sm font-semibold text-white transition hover:bg-[#006E74]"
+            >
+              {labels.search}
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* MOBILE NAVIGATION */}
+      {mobileOpen && (
+        <div className="border-t border-slate-100 bg-white/95 px-4 pb-5 pt-3 shadow-xl backdrop-blur-2xl xl:hidden">
+          <nav
+            aria-label="Mobile navigation"
+            className="mx-auto max-w-2xl space-y-1"
+          >
+            {navigation.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === "/"}
+                className={({ isActive }) =>
+                  `flex items-center justify-between rounded-xl px-4 py-3.5 text-sm transition ${
+                    isActive
+                      ? "bg-[#E5F5F4] font-bold text-[#007F83]"
+                      : "text-slate-700 hover:bg-slate-50 hover:text-[#007F83]"
+                  }`
+                }
+              >
+                {getLabel(item)}
+                <ArrowUpRight
+                  size={16}
+                  className="opacity-50"
+                />
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className="mx-auto mt-4 flex max-w-2xl flex-wrap gap-2 border-t border-slate-100 pt-4">
+            {languages.map((item) => (
+              <button
+                key={item.code}
+                type="button"
+                onClick={() => changeLanguage(item.code)}
+                className={`rounded-full border px-3 py-2 text-xs font-medium transition ${
+                  currentLanguage === item.code
+                    ? "border-teal-200 bg-teal-50 text-teal-800"
+                    : "border-slate-200 text-slate-600"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </header>
   );
 }
