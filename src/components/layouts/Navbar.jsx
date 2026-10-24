@@ -226,19 +226,6 @@ export default function Navbar() {
               className="flex h-9 items-center gap-1.5 rounded-full border border-white/80 bg-white/80 px-2.5 text-xs font-semibold text-[#244B60] shadow-sm backdrop-blur-md transition hover:bg-white sm:h-10 sm:gap-2 sm:px-3"
             >
               <Globe size={15} />
-              <span>
-                {
-                  languages.find(
-                    (item) => item.code === currentLanguage
-                  )?.short
-                }
-              </span>
-              <ChevronDown
-                size={13}
-                className={`transition-transform ${
-                  languageOpen ? "rotate-180" : ""
-                }`}
-              />
             </button>
 
             {languageOpen && (
@@ -267,19 +254,13 @@ export default function Navbar() {
           {/* APPOINTMENT */}
           <Link
             to="/contact"
-            className="group inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-white/80 bg-[#00878B] px-3 text-[11px] font-bold text-white shadow-[0_5px_18px_rgba(0,119,126,0.14)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#006E74] sm:gap-2.5 sm:px-4 sm:text-xs lg:px-5"
+            className="hidden group md:inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-white/80 bg-[#00878B] px-3 text-[11px] font-bold text-white shadow-[0_5px_18px_rgba(0,119,126,0.14)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#006E74] sm:gap-2.5 sm:px-4 sm:text-xs lg:px-5"
           >
             <CalendarDays size={16} />
             <span className="hidden sm:inline">
               {labels.appointment}
             </span>
-            <span className="sm:hidden">
-              {currentLanguage === "fa"
-                ? "نوبت"
-                : currentLanguage === "ps"
-                  ? "ملاقات"
-                  : "Book"}
-            </span>
+            
             <ArrowUpRight
               size={14}
               className="hidden sm:block"

@@ -68,13 +68,13 @@ const stagger = {
 const images = {
   doctor: "/images/hero_image.png",
   about: "/images/about-doctor.jpg",
-  brain: "/images/brain-surgery.jpg",
-  spine: "/images/spine-care.jpg",
-  consultation: "/images/consultation.jpg",
-  research: "/images/medical-research.jpg",
-  article1: "/images/article-brain.jpg",
-  article2: "/images/article-spine.jpg",
-  article3: "/images/article-neurosurgery.jpg",
+  brain: "https://images.unsplash.com/photo-1758691463110-697a814b2033?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
+  spine: "https://plus.unsplash.com/premium_photo-1664303535827-78a06a7b25a7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
+  consultation: "https://media.istockphoto.com/id/155374047/photo/open-palate-surgery-using-a-dingman-mouth-gag.webp?a=1&b=1&s=612x612&w=0&k=20&c=R1c2a695pKSXKR-E8mvUe-NYdbuJ0rGinH0C1gsMxc4=",
+  research: "https://media.istockphoto.com/id/1426761196/photo/hand-of-scientist-holding-flask-with-lab-glassware-in-chemical-laboratory-background-science.webp?a=1&b=1&s=612x612&w=0&k=20&c=GVms0PKC-alHF2-PyiK1r9kb5QpQwJFejGkPgwJ1tqg=",
+  article1: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
+  article2: "https://media.istockphoto.com/id/2270906142/photo/dentist-explaining-oral-hygiene-to-male-patient-using-a-dental-model-during-consultation-in.webp?a=1&b=1&s=612x612&w=0&k=20&c=ga7W3KEQFZE8-mpa6NRgb7Zi0qGWxlWhqnR9hlZyrTM=",
+  article3: "https://plus.unsplash.com/premium_photo-1661627133045-6fcffcefaa8c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
 };
 
 /* =========================================================
